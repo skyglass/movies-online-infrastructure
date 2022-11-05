@@ -1,2 +1,2 @@
-# movies-online-infrastructure
-Movies Online AWS Infrastructure with Terraform
+# petclinic-online-infrastructure
+Petclinic Online AWS Infrastructure with Terraform
