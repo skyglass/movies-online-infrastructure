@@ -1,10 +1,10 @@
 # Resource: Movies API Service
 resource "kubernetes_service_v1" "movies_api_service" {
-depends_on = [kubernetes_service_v1.keycloak_service, kubernetes_service_v1.mongodb_service]
+  depends_on = [var.sample_app_depends_on] 
   metadata {
     name = "movies-api"
     annotations = {
-      "alb.ingress.kubernetes.io/healthcheck-path" = "/actuator/health"
+      "alb.ingress.kubernetes.io/healthcheck-path" = "/movies-api/actuator/health"
     }      
   }
   spec {

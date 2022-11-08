@@ -25,7 +25,7 @@ spring.data.mongodb:
 
 app:
   cors:
-    allowed-origins: https://movie.skycomposer.net/movies-ui  
+    allowed-origins: https://movie.greeta.net/ui
 
 management:
   endpoints:
@@ -47,7 +47,7 @@ springdoc:
     disable-swagger-default-url: true
 
 keycloak:
-  auth-server-url: https://movie.skycomposer.net/auth
+  auth-server-url: https://movie.greeta.net
   realm: company-services
   resource: movies-app
   ssl-required: external
@@ -55,7 +55,24 @@ keycloak:
   use-resource-role-mappings: true
 
 keycloak-ext:
-  redirect-url: https://movie.skycomposer.net/movies-api/*
+  redirect-url: https://movie.greeta.net/ui/*
+
+
+jwt:
+  auth:
+    converter:
+      resource-id: movies-app
+      principal-attribute: preferred_username
+
+
+main:
+  allow-circular-references: true
+security:
+  oauth2:
+    resourceserver:
+      jwt:
+        issuer-uri: https://movie.greeta.net/realms/company-services
+        jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
 app.product-service.timeoutSec: 2
 

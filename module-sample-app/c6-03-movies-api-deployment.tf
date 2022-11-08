@@ -1,6 +1,6 @@
 # Resource: Movies API Kubernetes Deployment
 resource "kubernetes_deployment_v1" "movies_api_deployment" {
-  depends_on = [kubernetes_service_v1.keycloak_service, kubernetes_service_v1.mongodb_service]
+  depends_on = [var.sample_app_depends_on] 
   metadata {
     name = "movies-api"
   }
@@ -27,10 +27,10 @@ resource "kubernetes_deployment_v1" "movies_api_deployment" {
         }
         container {
           name = "movies-api"
-          image = "skyglass/movies-api:1.0.0"
+          image = "skyglass/movies-api:1.0.1"
           image_pull_policy = "Always"
           port {
-            container_port = 80
+            container_port = 8080
           }
           env {
             name = "SPRING_PROFILES_ACTIVE"
@@ -56,30 +56,6 @@ resource "kubernetes_deployment_v1" "movies_api_deployment" {
             limits = {
               memory = "400Mi"
             }
-          }
-          liveness_probe {
-            http_get {
-              scheme = "HTTP"
-              path = "/actuator/info"
-              port = "4004"
-            }
-            initial_delay_seconds = 10
-            period_seconds = 10
-            timeout_seconds = 2
-            failure_threshold = 30
-            success_threshold = 1
-          }
-          readiness_probe {
-            http_get {
-              scheme = "HTTP"
-              path = "/actuator/health"
-              port = "4004"
-            }
-            initial_delay_seconds = 10
-            period_seconds = 10
-            timeout_seconds = 2
-            failure_threshold = 3
-            success_threshold = 1
           }
         }
       }

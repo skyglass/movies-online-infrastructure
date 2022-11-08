@@ -30,7 +30,7 @@ resource "kubernetes_deployment_v1" "mongodb_deployment" {
         }
         container {
           name = "mongodb"
-          image = "mongo:3.6.9"
+          image = "mongo:5.0.9"
           port {
             container_port = 27017
           }

@@ -1,6 +1,6 @@
 # Resource: Movies UI Kubernetes Deployment
 resource "kubernetes_deployment_v1" "movies_ui_deployment" {
-  depends_on = [kubernetes_service_v1.movies_api_service]
+  depends_on = [var.sample_app_depends_on] 
   metadata {
     name = "movies-ui"
   }
@@ -21,7 +21,7 @@ resource "kubernetes_deployment_v1" "movies_ui_deployment" {
       spec {
         container {
           name = "movies-ui"
-          image = "skyglass/movies-ui:1.0.0"
+          image = "skyglass/movies-ui:1.0.1"
           image_pull_policy = "Always"
           port {
             container_port = 80
