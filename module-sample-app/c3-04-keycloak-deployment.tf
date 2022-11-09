@@ -29,11 +29,11 @@ resource "kubernetes_deployment_v1" "keycloak_deployment" {
           name = "keycloak"
           image = "quay.io/keycloak/keycloak:18.0.2"
           image_pull_policy = "Always"
-          args = ["start-dev"]
+          args = ["start", "--auto-build", "--log-level=DEBUG", "--proxy=edge"]
           port {
             container_port = 8080
             host_port = 8080
-          }
+          }         
           env {
             name = "KEYCLOAK_ADMIN"
             value_from {
@@ -51,7 +51,8 @@ resource "kubernetes_deployment_v1" "keycloak_deployment" {
                 key = "KEYCLOAK_ADMIN_PASSWORD"
               }
             }
-          }                     
+          }  
+
           env {
             name = "KEYCLOAK_USER"
             value_from {
@@ -137,6 +138,16 @@ resource "kubernetes_deployment_v1" "keycloak_deployment" {
           }
 
           env {
+            name = "KC_FEATURES"
+            value_from {
+              config_map_key_ref {
+                name = kubernetes_secret_v1.keycloak_secret.metadata.0.name
+                key = "KC_FEATURES"
+              }
+            }
+          }          
+
+          env {
             name = "KC_HOSTNAME"
             value_from {
               config_map_key_ref {
@@ -177,24 +188,64 @@ resource "kubernetes_deployment_v1" "keycloak_deployment" {
           }
 
           env {
-            name = "KC_PROXY"
+            name = "KEYCLOAK_FRONTEND_URL"
             value_from {
               config_map_key_ref {
                 name = kubernetes_secret_v1.keycloak_secret.metadata.0.name
-                key = "KC_PROXY"
+                key = "KEYCLOAK_FRONTEND_URL"
               }
             }
           }
 
           env {
-            name = "KC_PROXY_ADDRESS_FORWARDING"
+            name = "KC_HOSTNAME_STRICT"
             value_from {
               config_map_key_ref {
                 name = kubernetes_secret_v1.keycloak_secret.metadata.0.name
-                key = "KC_PROXY_ADDRESS_FORWARDING"
+                key = "KC_HOSTNAME_STRICT"
               }
             }
           }
+
+          # env {
+          #   name = "KC_DB"
+          #   value_from {
+          #     config_map_key_ref {
+          #       name = kubernetes_secret_v1.keycloak_secret.metadata.0.name
+          #       key = "KC_DB"
+          #     }
+          #   }
+          # }
+
+        env {
+          name = "KC_HOSTNAME_ADMIN_URL"
+          value_from {
+            config_map_key_ref {
+              name = kubernetes_secret_v1.keycloak_secret.metadata.0.name
+              key = "KC_HOSTNAME_ADMIN_URL"
+            }
+          }
+        }
+
+        env {
+          name = "KEYCLOAK_ADMIN_URL"
+          value_from {
+            config_map_key_ref {
+              name = kubernetes_secret_v1.keycloak_secret.metadata.0.name
+              key = "KEYCLOAK_ADMIN_URL"
+            }
+          }
+        }             
+
+          # env {
+          #   name = "KC_HOSTNAME_PATH"
+          #   value_from {
+          #     config_map_key_ref {
+          #       name = kubernetes_secret_v1.keycloak_secret.metadata.0.name
+          #       key = "KC_HOSTNAME_PATH"
+          #     }
+          #   }
+          # }   
 
           env {
             name = "PROXY_ADDRESS_FORWARDING"
@@ -204,7 +255,7 @@ resource "kubernetes_deployment_v1" "keycloak_deployment" {
                 key = "PROXY_ADDRESS_FORWARDING"
               }
             }
-          }           
+          }
                                                                                                                                                                                                                             
         }
       }
